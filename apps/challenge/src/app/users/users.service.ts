@@ -1,32 +1,26 @@
-import { randomUUID } from 'crypto';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { User } from './user.interface';
+import { CryptoService } from '../crypto/crypto.service';
+import USERS from './users';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnModuleInit {
   private readonly logger = new Logger(UsersService.name);
 
-  private readonly users: User[] = [
-    {
-      id: randomUUID(),
-      email: 'user_one@email.com',
-      password: 'password-one',
-    },
-    {
-      id: randomUUID(),
-      email: 'user_two@email.com',
-      password: 'password-two',
-    },
-    {
-      id: randomUUID(),
-      email: 'user_three@email.com',
-      password: 'password-three',
-    },
-  ];
+  private readonly users: User[] = [];
+
+  constructor(private readonly cryptoService: CryptoService) {}
 
   findOne(email: string): User | undefined {
     const user = this.users.find((user) => user.email === email);
     if (!user) this.logger.log(`User not found: ${email}!`);
     return user;
+  }
+
+  onModuleInit() {
+    USERS.forEach(async (user) => {
+      const password = await this.cryptoService.encodePassword(user.password);
+      this.users.push({ ...user, password });
+    });
   }
 }
