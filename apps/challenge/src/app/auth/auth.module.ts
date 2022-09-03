@@ -4,9 +4,11 @@ import { CryptoModule } from '../crypto/crypto.module';
 import { UsersModule } from '../users/users.module';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [CryptoModule, UsersModule, PassportModule],
   providers: [AuthService, LocalStrategy],
+  controllers: [AuthController],
 })
 export class AuthModule {}
