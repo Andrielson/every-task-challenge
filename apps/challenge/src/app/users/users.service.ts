@@ -18,9 +18,11 @@ export class UsersService implements OnModuleInit {
   }
 
   onModuleInit() {
-    USERS.forEach(async (user) => {
-      const password = await this.cryptoService.encodePassword(user.password);
-      this.users.push({ ...user, password });
-    });
+    return Promise.all(
+      USERS.map(async (user) => {
+        const password = await this.cryptoService.encodePassword(user.password);
+        this.users.push({ ...user, password });
+      })
+    );
   }
 }
