@@ -5,10 +5,8 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
   Req,
-  HttpCode,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { TasksService } from './tasks.service';
@@ -51,13 +49,5 @@ export class TasksController {
   ) {
     const user = req.user as User;
     return this.tasksService.update(id, updateTaskDto, user.id);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(204)
-  @Delete(':id')
-  remove(@Param('id') id: string, @Req() req: Request) {
-    const user = req.user as User;
-    return this.tasksService.remove(id, user.id);
   }
 }

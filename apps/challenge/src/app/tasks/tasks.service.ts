@@ -31,9 +31,4 @@ export class TasksService {
     task.status = updateTaskDto.status;
     return task;
   }
-
-  remove(id: string, userId: string) {
-    this.findOne(id, userId);
-    this.tasksMap.delete(id);
-  }
 }
