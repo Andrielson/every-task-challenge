@@ -1,9 +1,11 @@
 import { randomUUID } from 'crypto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { User } from './user.interface';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   private readonly users: User[] = [
     {
       id: randomUUID(),
@@ -23,6 +25,8 @@ export class UsersService {
   ];
 
   findOne(email: string): User | undefined {
-    return this.users.find(user => user.email === email);
+    const user = this.users.find((user) => user.email === email);
+    if (!user) this.logger.log(`User not found: ${email}!`);
+    return user;
   }
 }
