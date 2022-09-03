@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { CryptoService } from '../crypto/crypto.service';
@@ -14,7 +14,16 @@ export class AuthService {
     private readonly usersService: UsersService
   ) {}
 
-  async validateUser(email: string, password: string) {
+  async login({ email, password }: LoginDto) {
+    const user = await this.validateUser(email, password);
+    if (!user) throw new UnauthorizedException();
+    const payload = { username: email, sub: user.id, jti: randomUUID() };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  private async validateUser(email: string, password: string) {
     const user = this.usersService.findOne(email);
     const validPassword =
       user &&
@@ -27,13 +36,5 @@ export class AuthService {
 
     const { password: _, ...publicUserData } = user;
     return publicUserData;
-  }
-
-  async login({ email, password }: LoginDto) {
-    const user = await this.validateUser(email, password);
-    const payload = { username: email, sub: user.id, jti: randomUUID() };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
   }
 }
