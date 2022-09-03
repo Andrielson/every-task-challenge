@@ -1,17 +1,9 @@
-import { FactoryProvider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TaskStatus } from './entities/task-status';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
-
-const tasksServiceProvider: FactoryProvider = {
-  provide: TasksService,
-  useFactory: () => ({
-    create: jest.fn(),
-  }),
-};
 
 const createTaskDto: CreateTaskDto = {
   description: 'Some Description',
@@ -20,7 +12,6 @@ const createTaskDto: CreateTaskDto = {
 const fakeRequest: Pick<Request, 'user'> = { user: { id: '1' } };
 
 describe('TasksController', () => {
-  let service: TasksService;
   let controller: TasksController;
 
   beforeEach(async () => {
@@ -30,7 +21,6 @@ describe('TasksController', () => {
     }).compile();
 
     controller = module.get<TasksController>(TasksController);
-    service = module.get<TasksService>(TasksService);
   });
 
   it('should be defined', () => {
