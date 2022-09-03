@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { UsersService } from './users/users.service';
 
 @Injectable()
 export class AppService {
-  getData(): { message: string } {
-    return { message: 'Welcome to challenge!' };
+  constructor(private readonly usersService: UsersService) {}
+
+  getData() {
+    return this.usersService.findOne('user_one@email.com');
   }
 }
